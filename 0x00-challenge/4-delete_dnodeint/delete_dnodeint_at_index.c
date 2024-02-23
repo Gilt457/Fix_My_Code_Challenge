@@ -2,51 +2,52 @@
 #include <stdlib.h>
 
 /**
- * delete_dnodeint_at_index - Remove a node at a given index from a list
+ * delete_dnodeint_at_index - Delete a node at a specific index from a list
  *
  * @head: A pointer to the first element of a list
- * @index: The index of the node to remove
+ * @index: The index of the node to delete
  *
  * Return: 1 on success, -1 on failure
  */
 int delete_dnodeint_at_index(dlistint_t **head, unsigned int index)
 {
-	dlistint_t *current, *next, *prev;
-	unsigned int i;
+	dlistint_t *saved_head;
+	dlistint_t *tmp;
+	unsigned int p;
 
-	if (head == NULL || *head == NULL)
+	if (*head == NULL)
 	{
 		return (-1);
 	}
-	current = *head;
-	i = 0;
-	while (i < index && current != NULL)
+	saved_head = *head;
+	p = 0;
+	while (p < index && *head != NULL)
 	{
-		current = current->next;
-		i++;
+		*head = (*head)->next;
+		p++;
 	}
-	if (i != index || current == NULL)
+	if (p != index)
 	{
+		*head = saved_head;
 		return (-1);
 	}
-	next = current->next;
-	prev = current->prev;
-	free(current);
-	if (index == 0)
+	if (0 == index)
 	{
-		*head = next;
-		if (next != NULL)
+		tmp = (*head)->next;
+		free(*head);
+		*head = tmp;
+		if (tmp != NULL)
 		{
-			next->prev = NULL;
+			tmp->prev = NULL;
 		}
 	}
 	else
 	{
-		prev->next = next;
-		if (next != NULL)
-		{
-			next->prev = prev;
-		}
+		(*head)->prev->next = (*head)->next;
+		free(*head);
+		if ((*head)->next)
+			(*head)->next->prev = (*head)->prev;
+		*head = saved_head;
 	}
 	return (1);
-i}
+}
